@@ -27,6 +27,3 @@ while report:
 
 #output
 print(sum(to_do_report.values()))
-
-
-
