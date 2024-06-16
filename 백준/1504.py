@@ -1,6 +1,7 @@
 import heapq
 import sys
 
+#input
 N, E = map(int, sys.stdin.readline().split())
 graph = [[sys.maxsize] * (N) for _ in range(N)]
 for _ in range(E):
@@ -9,14 +10,14 @@ for _ in range(E):
     graph[b-1][a-1] = c
 a, b = map(lambda x: int(x)-1, sys.stdin.readline().split())
 
+#다익스트라
 def dijkstra(start):
-    heap = []
-    heap.append((0, start))
+    h = [(0, start)]
     dist = [sys.maxsize] * (N)
     path = [0] * N
 
-    while heap != []:
-        now_dist, now = heapq.heappop(heap)
+    while h != []:
+        now_dist, now = heapq.heappop(h)
 
         if dist[now] < now_dist:
             continue
@@ -24,13 +25,14 @@ def dijkstra(start):
         dist[now] = now_dist
 
         for to, to_dist in enumerate(graph[now]):
-            if now != to and now_dist + to_dist < dist[to]:
-                heapq.heappush(heap, (now_dist + to_dist, to))
+            if now_dist + to_dist < dist[to]:
+                heapq.heappush(h, (now_dist + to_dist, to))
                 dist[to] = now_dist + to_dist
                 path[to] = now
 
-        return dist, path
+    return dist, path
 
+#거치는 노드를 check
 def check_in(path, end, passby):
     while path[end] != 0:
         if end == passby:
@@ -38,43 +40,31 @@ def check_in(path, end, passby):
         end = path[end]
     return False
 
-simple_graph = [[sys.maxsize] * 4 for _ in range(4)]
 
-from1_dist, from1_path = dijkstra(0)
-froma_dist, froma_path = dijkstra(a)
-fromb_dist, fromb_path = dijkstra(b)
+#check
+from_1_dist, from_1_path = dijkstra(0)
+is_1a_in_b = check_in(from_1_path, a, b)
+is_1b_in_a = check_in(from_1_path, b, a)
 
-inA = check_in(from1_path, b, a)
-if inA:
-    simple_graph[0][1] = from1_dist[a]
-    simple_graph[1][2] = froma_dist[b]
+from_a_dist, from_a_path = dijkstra(a)
+is_an_in_b = check_in(from_a_path, N-1, b)
+
+from_b_dist, from_b_path = dijkstra(b)
+is_bn_in_a = check_in(from_b_path, N-1, a)
+
+ans = sys.maxsize
+
+#각각의 경우를 check
+if is_1a_in_b or is_an_in_b:
+    ans = min(ans, from_1_dist[a] + from_a_dist[N-1])
+
+if is_1b_in_a or is_bn_in_a:
+    ans = min(ans, from_1_dist[b] + from_b_dist[N-1])
+
+ans = min(ans, from_1_dist[a] + from_a_dist[b] + from_b_dist[N-1], from_1_dist[b] + from_b_dist[a] + from_a_dist[N-1])
+
+#output
+if ans >= sys.maxsize:
+    print(-1)
 else:
-    simple_graph[0][1] = from1_dist[a]
-    simple_graph[0][2] = from1_dist[b]
-
-inB = check_in(from1_path, a, b)
-if inB:
-    simple_graph[0][2] = from1_dist[b]
-    simple_graph[2][1] = fromb_dist[a]
-else:
-    simple_graph[0][1] = from1_dist[a]
-    simple_graph[0][2] = from1_dist[b]
-
-###########
-inA = check_in(froma_path, N-1, a)
-if inA:
-    simple_graph[0][1] = from1_dist[a]
-    simple_graph[1][2] = froma_dist[b]
-else:
-    simple_graph[0][1] = from1_dist[a]
-    simple_graph[0][2] = from1_dist[b]
-
-inB = check_in(froma_path, N-1, a)
-if inB:
-    simple_graph[0][2] = from1_dist[b]
-    simple_graph[2][1] = fromb_dist[a]
-else:
-    simple_graph[0][1] = from1_dist[a]
-    simple_graph[0][2] = from1_dist[b]
-
-
+    print(ans)
