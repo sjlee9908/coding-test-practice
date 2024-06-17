@@ -45,5 +45,3 @@ while selected_e + 1 != v_count:
 #output
 print(weight)
 
-
-""""prim"""

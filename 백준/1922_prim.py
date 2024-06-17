@@ -1,3 +1,4 @@
+""""prim"""
 import sys
 
 #input
