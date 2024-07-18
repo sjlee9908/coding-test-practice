@@ -18,7 +18,7 @@ def dfs(nums):
     if nums == '' or nums[0] == '0':
         return 0
     else:
-        if int(nums[0:2]) >= 34 or int(nums[0:2]) == 20 or int(nums[0:2]) == 10:
+        if int(nums[0:2]) > 34:
             dp_table[nums] = dfs(nums[1:])
         else:
             dp_table[nums] = dfs(nums[2:]) + dfs(nums[1:])

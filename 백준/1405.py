@@ -14,6 +14,7 @@ ans = 1.0  #로봇이 한 곳을 두번 방문하지 않을 확률 == 맨 처음
 def dfs(x, y, level, now_prob):
     global ans
 
+
     #가지치기 조건 == 1곳을 두번 방문
     if sol[(x, y)]:
         ans -= now_prob
